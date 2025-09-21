@@ -4,7 +4,8 @@
       "Bash(start index.html)",
       "Read(//c/Users/**)",
       "WebSearch",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
