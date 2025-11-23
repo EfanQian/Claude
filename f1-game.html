@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Racing Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+            background: #000;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .hud-item {
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-left: 3px solid #ff0000;
+        }
+
+        .speed {
+            color: #00ff00;
+        }
+
+        .lap-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .position {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+            text-align: right;
+            z-index: 10;
+        }
+
+        .controls p {
+            margin: 4px 0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+        }
+
+        .pit-stop {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border: 3px solid #ff6600;
+            text-align: center;
+            z-index: 15;
+            display: none;
+        }
+
+        .pit-stop h2 {
+            font-size: 32px;
+            color: #ffff00;
+            margin-bottom: 15px;
+        }
+
+        .pit-bar {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #ff6600;
+            margin: 10px auto;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .pit-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .pit-label {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border: 3px solid #ff0000;
+            text-align: center;
+            z-index: 20;
+            display: none;
+        }
+
+        .game-over h1 {
+            font-size: 48px;
+            color: #ffff00;
+            margin-bottom: 20px;
+        }
+
+        .game-over p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .game-over button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .game-over button:hover {
+            background: #ff3333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="hud">
+            <div class="hud-item">
+                Speed: <span class="speed" id="speed">0</span> km/h
+            </div>
+            <div class="hud-item">
+                Engine RPM: <span id="rpm">0</span>
+            </div>
+            <div class="hud-item">
+                Gear: <span id="gear">N</span>
+            </div>
+        </div>
+
+        <div class="lap-info">
+            <div class="hud-item">
+                Lap: <span id="lap">1</span>/3
+            </div>
+            <div class="hud-item">
+                Lap Time: <span id="lapTime">0:00.000</span>
+            </div>
+            <div class="hud-item">
+                Best: <span id="bestTime">--:--:---</span>
+            </div>
+        </div>
+
+        <div class="position">
+            <div class="hud-item">
+                Position: <span id="position">1</span>/1
+            </div>
+        </div>
+
+        <div class="controls">
+            <p>↑ W - Accelerate</p>
+            <p>↓ S - Brake</p>
+            <p>← A - Left</p>
+            <p>→ D - Right</p>
+            <p>SPACE - Handbrake</p>
+        </div>
+
+        <div class="pit-stop" id="pitStopScreen">
+            <h2>PIT STOP</h2>
+            <div>
+                <div class="pit-label">Refueling</div>
+                <div class="pit-bar">
+                    <div class="pit-bar-fill" id="fuelBar"></div>
+                </div>
+            </div>
+            <div>
+                <div class="pit-label">Tire Change</div>
+                <div class="pit-bar">
+                    <div class="pit-bar-fill" id="tireBar"></div>
+                </div>
+            </div>
+            <p id="pitTime" style="margin-top: 15px; font-size: 14px;">Time in Pit: 0.0s</p>
+            <p style="font-size: 12px; margin-top: 10px; color: #aaa;">Speed down and enter the pit lane at the start of lap 2</p>
+        </div>
+
+        <div class="game-over" id="gameOverScreen">
+            <h1 id="gameOverTitle">RACE COMPLETED!</h1>
+            <p>Final Time: <span id="finalTime">0:00.000</span></p>
+            <p>Best Lap: <span id="finalBestLap">0:00.000</span></p>
+            <button onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 1000;
+        canvas.height = 600;
+
+        // Game constants
+        const TOTAL_LAPS = 3;
+        const TRACK_WIDTH = 80;
+        const CAR_WIDTH = 20;
+        const CAR_HEIGHT = 30;
+
+        // Game state
+        let gameState = {
+            currentLap: 1,
+            lapStartTime: Date.now(),
+            totalRaceTime: 0,
+            bestLapTime: Infinity,
+            lapTimes: [],
+            gameOver: false,
+            crossedFinishLine: false,
+            inPitStop: false,
+            pitStopStartTime: 0,
+            pitStopDuration: 4, // seconds
+            fuel: 100,
+            tireWear: 0,
+            pitStopsRequired: 1
+        };
+
+        // Car object
+        const car = {
+            x: 500,
+            y: 500,
+            vx: 0,
+            vy: 0,
+            speed: 0,
+            rotation: -Math.PI / 2,
+            maxSpeed: 300,
+            acceleration: 150,
+            friction: 0.92,
+            rpm: 0,
+            gear: 'N',
+            turbo: 0,
+            health: 100
+        };
+
+        // Input handling
+        const keys = {};
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === ' ') e.preventDefault();
+        });
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Track waypoints (simple circuit)
+        const trackWaypoints = [
+            { x: 500, y: 500 }, // Start/Finish
+            { x: 500, y: 150 }, // Top straight
+            { x: 200, y: 150 }, // Top left corner
+            { x: 100, y: 300 }, // Left side
+            { x: 100, y: 450 }, // Bottom left
+            { x: 300, y: 500 }, // Bottom left straight
+        ];
+
+        let currentWaypoint = 1;
+        let lapStartWaypoint = 0;
+
+        // Pit stop location
+        const pitLane = {
+            x: 600,
+            y: 150,
+            width: 60,
+            height: 40
+        };
+
+        function drawTrack() {
+            // Track background
+            ctx.fillStyle = '#1a4d2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw road/track
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = TRACK_WIDTH;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(trackWaypoints[0].x, trackWaypoints[0].y);
+            for (let i = 1; i < trackWaypoints.length; i++) {
+                ctx.lineTo(trackWaypoints[i].x, trackWaypoints[i].y);
+            }
+            ctx.lineTo(trackWaypoints[0].x, trackWaypoints[0].y);
+            ctx.stroke();
+
+            // Draw grass/curbs
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([10, 10]);
+            ctx.beginPath();
+            ctx.moveTo(trackWaypoints[0].x, trackWaypoints[0].y);
+            for (let i = 1; i < trackWaypoints.length; i++) {
+                ctx.lineTo(trackWaypoints[i].x, trackWaypoints[i].y);
+            }
+            ctx.lineTo(trackWaypoints[0].x, trackWaypoints[0].y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw finish line
+            const finishPoint = trackWaypoints[0];
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 10]);
+            ctx.beginPath();
+            ctx.moveTo(finishPoint.x - 30, finishPoint.y);
+            ctx.lineTo(finishPoint.x + 30, finishPoint.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw checkpoints
+            trackWaypoints.forEach((point, index) => {
+                ctx.fillStyle = index === 0 ? '#ffff00' : '#00ff00';
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw pit lane
+            ctx.fillStyle = 'rgba(255, 102, 0, 0.3)';
+            ctx.fillRect(pitLane.x - pitLane.width / 2, pitLane.y - pitLane.height / 2, pitLane.width, pitLane.height);
+
+            ctx.strokeStyle = '#ff6600';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pitLane.x - pitLane.width / 2, pitLane.y - pitLane.height / 2, pitLane.width, pitLane.height);
+
+            ctx.fillStyle = '#ff6600';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('PIT', pitLane.x, pitLane.y);
+        }
+
+        function drawCar() {
+            ctx.save();
+            ctx.translate(car.x, car.y);
+            ctx.rotate(car.rotation);
+
+            // Car body
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(-CAR_WIDTH / 2, -CAR_HEIGHT / 2, CAR_WIDTH, CAR_HEIGHT);
+
+            // Car highlight
+            ctx.fillStyle = '#ffff00';
+            ctx.fillRect(-CAR_WIDTH / 2 + 2, -CAR_HEIGHT / 2 + 2, CAR_WIDTH - 4, 8);
+
+            // Car details
+            ctx.fillStyle = '#000';
+            ctx.fillRect(-CAR_WIDTH / 2 + 3, -CAR_HEIGHT / 2 + 12, CAR_WIDTH - 6, 6);
+
+            ctx.restore();
+        }
+
+        function updateCar(deltaTime) {
+            // Check if in pit stop
+            const distToPit = Math.hypot(car.x - pitLane.x, car.y - pitLane.y);
+
+            if (distToPit < 35 && gameState.currentLap === 2 && !gameState.inPitStop && gameState.pitStopsRequired > 0) {
+                startPitStop();
+            }
+
+            if (gameState.inPitStop) {
+                car.speed = 0;
+                updatePitStop(deltaTime);
+                return;
+            }
+
+            let acceleration = 0;
+            let turning = 0;
+
+            // Controls
+            if (keys['w'] || keys['arrowup']) {
+                acceleration = car.acceleration;
+                car.gear = 'D';
+            }
+            if (keys['s'] || keys['arrowdown']) {
+                acceleration = -car.acceleration * 0.6;
+                car.gear = 'R';
+            }
+            if (keys['a'] || keys['arrowleft']) {
+                turning = -0.15;
+            }
+            if (keys['d'] || keys['arrowright']) {
+                turning = 0.15;
+            }
+            if (keys[' ']) {
+                car.friction = 0.85; // Handbrake
+            } else {
+                car.friction = 0.92;
+            }
+
+            // Update speed
+            car.speed += acceleration * deltaTime;
+            car.speed = Math.max(-car.maxSpeed * 0.5, Math.min(car.maxSpeed, car.speed));
+
+            // Update RPM based on speed
+            car.rpm = Math.abs(car.speed) * 0.2;
+
+            // Apply friction
+            car.speed *= car.friction;
+
+            // Fuel consumption
+            gameState.fuel = Math.max(0, gameState.fuel - Math.abs(car.speed) * 0.01 * deltaTime);
+
+            // Tire wear
+            gameState.tireWear = Math.min(100, gameState.tireWear + Math.abs(car.speed) * 0.05 * deltaTime);
+
+            // Update velocity
+            car.vx = Math.cos(car.rotation) * car.speed;
+            car.vy = Math.sin(car.rotation) * car.speed;
+
+            // Update position
+            car.x += car.vx * deltaTime;
+            car.y += car.vy * deltaTime;
+
+            // Update rotation
+            if (Math.abs(car.speed) > 10) {
+                car.rotation += turning * (Math.abs(car.speed) / car.maxSpeed);
+            }
+
+            // Keep car in bounds with collision
+            if (car.x < 50 || car.x > canvas.width - 50) {
+                car.x = Math.max(50, Math.min(canvas.width - 50, car.x));
+                car.speed *= -0.3;
+            }
+            if (car.y < 50 || car.y > canvas.height - 50) {
+                car.y = Math.max(50, Math.min(canvas.height - 50, car.y));
+                car.speed *= -0.3;
+            }
+
+            // Check lap progress
+            checkLapProgress();
+        }
+
+        function startPitStop() {
+            gameState.inPitStop = true;
+            gameState.pitStopStartTime = Date.now();
+            document.getElementById('pitStopScreen').style.display = 'block';
+        }
+
+        function updatePitStop(deltaTime) {
+            const elapsed = (Date.now() - gameState.pitStopStartTime) / 1000;
+            const progress = Math.min(1, elapsed / gameState.pitStopDuration);
+
+            // Update fuel and tire status
+            gameState.fuel = Math.min(100, gameState.fuel + 30 * deltaTime);
+            gameState.tireWear = Math.max(0, gameState.tireWear - 40 * deltaTime);
+
+            // Update progress bars
+            document.getElementById('fuelBar').style.width = (progress * 50) + '%';
+            document.getElementById('tireBar').style.width = (progress * 50) + '%';
+            document.getElementById('pitTime').textContent = `Time in Pit: ${elapsed.toFixed(1)}s`;
+
+            if (elapsed >= gameState.pitStopDuration) {
+                exitPitStop();
+            }
+        }
+
+        function exitPitStop() {
+            gameState.inPitStop = false;
+            gameState.pitStopsRequired--;
+            document.getElementById('pitStopScreen').style.display = 'none';
+            document.getElementById('fuelBar').style.width = '0%';
+            document.getElementById('tireBar').style.width = '0%';
+        }
+
+        function checkLapProgress() {
+            const finishLine = trackWaypoints[0];
+            const distToFinish = Math.hypot(car.x - finishLine.x, car.y - finishLine.y);
+
+            // Check if crossed finish line
+            if (distToFinish < 40 && Math.abs(car.vy) > 20) {
+                if (!gameState.crossedFinishLine && currentWaypoint > 0) {
+                    // Lap completed
+                    completeLap();
+                    gameState.crossedFinishLine = true;
+                }
+            } else if (distToFinish > 50) {
+                gameState.crossedFinishLine = false;
+            }
+        }
+
+        function completeLap() {
+            const lapTime = (Date.now() - gameState.lapStartTime) / 1000;
+            gameState.lapTimes.push(lapTime);
+
+            if (lapTime < gameState.bestLapTime) {
+                gameState.bestLapTime = lapTime;
+            }
+
+            currentWaypoint = 1;
+
+            if (gameState.currentLap < TOTAL_LAPS) {
+                gameState.currentLap++;
+                gameState.lapStartTime = Date.now();
+            } else {
+                endRace();
+            }
+        }
+
+        function endRace() {
+            gameState.gameOver = true;
+            document.getElementById('gameOverScreen').style.display = 'block';
+            document.getElementById('finalTime').textContent = formatTime(gameState.lapTimes.reduce((a, b) => a + b, 0));
+            document.getElementById('finalBestLap').textContent = formatTime(gameState.bestLapTime);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const ms = Math.round((secs % 1) * 1000);
+            return `${mins}:${Math.floor(secs).toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+        }
+
+        function updateHUD() {
+            document.getElementById('speed').textContent = Math.round(Math.abs(car.speed));
+            document.getElementById('rpm').textContent = Math.round(car.rpm * 1000);
+            document.getElementById('gear').textContent = car.gear;
+            document.getElementById('lap').textContent = gameState.currentLap;
+
+            const currentLapTime = (Date.now() - gameState.lapStartTime) / 1000;
+            document.getElementById('lapTime').textContent = formatTime(currentLapTime);
+            document.getElementById('bestTime').textContent = gameState.bestLapTime === Infinity ? '--:--:---' : formatTime(gameState.bestLapTime);
+
+            // Update fuel and tire indicators in console (optional visual feedback)
+            if (!gameState.inPitStop) {
+                // Could add these to the HUD if desired
+            }
+        }
+
+        let lastTime = Date.now();
+        function gameLoop() {
+            const currentTime = Date.now();
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            if (!gameState.gameOver) {
+                updateCar(deltaTime);
+                updateHUD();
+            }
+
+            // Clear and draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawTrack();
+            drawCar();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        gameLoop();
+    </script>
+</body>
+</html>

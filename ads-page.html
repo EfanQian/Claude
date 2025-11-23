@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ads Central - Your Premium Ad Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .ads-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .ad {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .ad:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .ad-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+        }
+
+        .ad-content {
+            padding: 20px;
+        }
+
+        .ad-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .ad-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .ad-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .ad-button:hover {
+            opacity: 0.9;
+        }
+
+        .banner-ad {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner-ad h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .banner-ad p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .banner-ad button {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .banner-ad button:hover {
+            transform: scale(1.05);
+        }
+
+        .side-ad {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 250px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .side-ad h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .side-ad p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .side-ad button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-ad {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .popup-ad {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            display: none;
+        }
+
+        .popup-overlay.active {
+            display: block;
+        }
+
+        .popup-ad.hidden {
+            display: none;
+        }
+
+        .floating-ad {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .side-ad {
+                display: none;
+            }
+
+            .ads-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ad-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Side Ad -->
+    <div class="side-ad">
+        <button class="close-ad" onclick="this.parentElement.style.display='none';">×</button>
+        <h3>Premium Offer</h3>
+        <p>Get 50% off on your first purchase today!</p>
+        <button onclick="alert('Thanks for clicking!')">Claim Offer</button>
+    </div>
+
+    <!-- Floating Bottom Ad -->
+    <div class="floating-ad">
+        <button class="close-ad" onclick="this.parentElement.style.display='none';">×</button>
+        <h4>Limited Time Deal</h4>
+        <p>Download our app and get exclusive bonuses!</p>
+        <button class="ad-button">Download Now</button>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🎯 ADS CENTRAL</h1>
+        <p>Discover Amazing Offers & Promotions</p>
+    </div>
+
+    <!-- Top Banner Ad -->
+    <div class="banner-ad">
+        <h2>✨ MEGA SALE EVENT ✨</h2>
+        <p>Everything on sale - Up to 80% OFF!</p>
+        <button onclick="alert('SHOP NOW activated!')">SHOP NOW</button>
+    </div>
+
+    <!-- Main Ads Grid -->
+    <div class="ads-container">
+        <!-- Ad 1 -->
+        <div class="ad">
+            <div class="ad-image">🛍️</div>
+            <div class="ad-content">
+                <div class="ad-badge">LIMITED TIME</div>
+                <div class="ad-title">Fashion Forward</div>
+                <div class="ad-description">Get the latest fashion trends at unbeatable prices. Premium quality, affordable prices!</div>
+                <button class="ad-button">Shop Now</button>
+            </div>
+        </div>
+
+        <!-- Ad 2 -->
+        <div class="ad">
+            <div class="ad-image">💻</div>
+            <div class="ad-content">
+                <div class="ad-badge">HOT DEAL</div>
+                <div class="ad-title">Tech Gadgets</div>
+                <div class="ad-description">Latest electronics and gadgets. Free shipping on orders over $50!</div>
+                <button class="ad-button">Browse Tech</button>
+            </div>
+        </div>
+
+        <!-- Ad 3 -->
+        <div class="ad">
+            <div class="ad-image">🏠</div>
+            <div class="ad-content">
+                <div class="ad-badge">NEW COLLECTION</div>
+                <div class="ad-title">Home Decor</div>
+                <div class="ad-description">Transform your home with our beautiful furniture and decor items.</div>
+                <button class="ad-button">Explore Home</button>
+            </div>
+        </div>
+
+        <!-- Ad 4 -->
+        <div class="ad">
+            <div class="ad-image">🍕</div>
+            <div class="ad-content">
+                <div class="ad-badge">ORDER NOW</div>
+                <div class="ad-title">Food Delivery</div>
+                <div class="ad-description">Hungry? Order your favorite meals from top restaurants near you!</div>
+                <button class="ad-button">Order Food</button>
+            </div>
+        </div>
+
+        <!-- Ad 5 -->
+        <div class="ad">
+            <div class="ad-image">✈️</div>
+            <div class="ad-content">
+                <div class="ad-badge">TRAVEL DEALS</div>
+                <div class="ad-title">Vacation Packages</div>
+                <div class="ad-description">Book your dream vacation with exclusive discounts and packages!</div>
+                <button class="ad-button">Book Travel</button>
+            </div>
+        </div>
+
+        <!-- Ad 6 -->
+        <div class="ad">
+            <div class="ad-image">💪</div>
+            <div class="ad-content">
+                <div class="ad-badge">GET FIT</div>
+                <div class="ad-title">Fitness & Wellness</div>
+                <div class="ad-description">Join our fitness community and achieve your health goals!</div>
+                <button class="ad-button">Start Now</button>
+            </div>
+        </div>
+
+        <!-- Ad 7 -->
+        <div class="ad">
+            <div class="ad-image">📚</div>
+            <div class="ad-content">
+                <div class="ad-badge">LEARN MORE</div>
+                <div class="ad-title">Online Courses</div>
+                <div class="ad-description">Expand your skills with our comprehensive online education platform.</div>
+                <button class="ad-button">Explore Courses</button>
+            </div>
+        </div>
+
+        <!-- Ad 8 -->
+        <div class="ad">
+            <div class="ad-image">🎮</div>
+            <div class="ad-content">
+                <div class="ad-badge">GAMING</div>
+                <div class="ad-title">Gaming Paradise</div>
+                <div class="ad-description">Play the latest games and connect with millions of gamers worldwide!</div>
+                <button class="ad-button">Play Games</button>
+            </div>
+        </div>
+
+        <!-- Ad 9 -->
+        <div class="ad">
+            <div class="ad-image">💄</div>
+            <div class="ad-content">
+                <div class="ad-badge">BEAUTY SALE</div>
+                <div class="ad-title">Beauty & Cosmetics</div>
+                <div class="ad-description">Premium beauty products from top brands at incredible prices!</div>
+                <button class="ad-button">Shop Beauty</button>
+            </div>
+        </div>
+
+        <!-- Ad 10 -->
+        <div class="ad">
+            <div class="ad-image">🚗</div>
+            <div class="ad-content">
+                <div class="ad-badge">AUTOMOTIVE</div>
+                <div class="ad-title">Car Deals</div>
+                <div class="ad-description">Find your perfect vehicle with our comprehensive auto marketplace.</div>
+                <button class="ad-button">Browse Cars</button>
+            </div>
+        </div>
+
+        <!-- Ad 11 -->
+        <div class="ad">
+            <div class="ad-image">🎬</div>
+            <div class="ad-content">
+                <div class="ad-badge">ENTERTAINMENT</div>
+                <div class="ad-title">Streaming Service</div>
+                <div class="ad-description">Unlimited movies, shows, and documentaries at your fingertips!</div>
+                <button class="ad-button">Start Free Trial</button>
+            </div>
+        </div>
+
+        <!-- Ad 12 -->
+        <div class="ad">
+            <div class="ad-image">⚡</div>
+            <div class="ad-content">
+                <div class="ad-badge">ENERGY SAVER</div>
+                <div class="ad-title">Smart Home Tech</div>
+                <div class="ad-description">Control your home with smart devices and save on energy bills!</div>
+                <button class="ad-button">Smart Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Ad -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup-ad" id="popupAd">
+        <button class="close-ad" onclick="closePopup()">×</button>
+        <h2>🎁 SPECIAL OFFER</h2>
+        <p style="color: #666; margin: 15px 0;">Subscribe to our newsletter and get 20% off your next purchase!</p>
+        <input type="email" placeholder="Enter your email" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px;">
+        <button class="ad-button" style="width: 100%; margin-bottom: 10px;" onclick="alert('Thanks for subscribing!')">Subscribe Now</button>
+        <button style="width: 100%; background: #999; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer;" onclick="closePopup()">No Thanks</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2024 ADS CENTRAL | All Rights Reserved | Privacy Policy | Terms & Conditions</p>
+    </div>
+
+    <script>
+        // Show popup after 3 seconds
+        setTimeout(() => {
+            document.getElementById('popupOverlay').classList.add('active');
+        }, 3000);
+
+        function closePopup() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            document.getElementById('popupAd').classList.add('hidden');
+        }
+
+        // Close popup when clicking overlay
+        document.getElementById('popupOverlay').addEventListener('click', closePopup);
+
+        // Add click tracking
+        document.querySelectorAll('.ad-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!e.target.textContent.includes('Claim') && !e.target.textContent.includes('Download') && !e.target.textContent.includes('SHOP') && !e.target.textContent.includes('Subscribe')) {
+                    console.log('Ad clicked:', this.closest('.ad') ? this.closest('.ad').querySelector('.ad-title').textContent : 'Unknown');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

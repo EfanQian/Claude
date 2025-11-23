@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Paradise - Ultimate Game Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, transparent 100%);
+        }
+
+        .header h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00d4ff;
+            animation: glow 2s infinite;
+        }
+
+        .header p {
+            font-size: 24px;
+            color: #00d4ff;
+            margin-bottom: 30px;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #00d4ff; }
+            50% { text-shadow: 0 0 40px #00d4ff, 0 0 60px #ff006e; }
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #ff006e 100%);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.8), 0 0 20px rgba(255, 0, 110, 0.8);
+        }
+
+        /* Game Categories */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+            border: 2px solid #00d4ff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            border-color: #ff006e;
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.3);
+        }
+
+        .category-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .category-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .category-card p {
+            color: #aaa;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .category-card button {
+            background: linear-gradient(135deg, #00d4ff 0%, #ff006e 100%);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .category-card button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Featured Games */
+        .featured {
+            padding: 60px 40px;
+            background: rgba(0, 0, 0, 0.5);
+            margin: 40px 0;
+        }
+
+        .featured h2 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 40px;
+            color: #00d4ff;
+            text-shadow: 0 0 20px #00d4ff;
+        }
+
+        .featured-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            border: 2px solid #ff006e;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 50px rgba(255, 0, 110, 0.4);
+            border-color: #00d4ff;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff006e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .game-rating {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .game-description {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .game-players {
+            color: #00d4ff;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .play-button {
+            width: 100%;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff006e 100%);
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .play-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            padding: 60px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .leaderboard h2 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 40px;
+            color: #00d4ff;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .leaderboard-table th {
+            background: linear-gradient(135deg, #00d4ff 0%, #ff006e 100%);
+            color: #000;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .leaderboard-table td {
+            padding: 15px;
+            border-bottom: 1px solid #00d4ff;
+            color: #fff;
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .rank {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .rank.first { color: #ffd700; }
+        .rank.second { color: #c0c0c0; }
+        .rank.third { color: #cd7f32; }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+            border: 2px solid #00d4ff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 2px solid #00d4ff;
+            color: #aaa;
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .categories, .featured-games {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield background -->
+    <div class="stars" id="starfield"></div>
+
+    <div class="content">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">🎮 GAMING PARADISE</div>
+            <div>
+                <a href="#games">Games</a>
+                <a href="#leaderboard">Leaderboard</a>
+                <a href="#community">Community</a>
+                <a href="#account">Account</a>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>GAMING PARADISE</h1>
+            <p>🚀 Enter the Ultimate Gaming Experience 🚀</p>
+            <button class="cta-button" onclick="alert('Welcome to Gaming Paradise! 🎮')">Start Gaming Now</button>
+        </div>
+
+        <!-- Game Categories -->
+        <div class="categories">
+            <div class="category-card">
+                <div class="category-icon">⚡</div>
+                <h3>Action Games</h3>
+                <p>Fast-paced thrilling adventures</p>
+                <button onclick="alert('Loading Action Games...')">Explore</button>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🧩</div>
+                <h3>Puzzle Games</h3>
+                <p>Challenge your mind</p>
+                <button onclick="alert('Loading Puzzle Games...')">Explore</button>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">👾</div>
+                <h3>Retro Games</h3>
+                <p>Classic arcade nostalgia</p>
+                <button onclick="alert('Loading Retro Games...')">Explore</button>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🏎️</div>
+                <h3>Racing Games</h3>
+                <p>High-speed competition</p>
+                <button onclick="alert('Loading Racing Games...')">Explore</button>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">⚔️</div>
+                <h3>Strategy Games</h3>
+                <p>Tactical decision making</p>
+                <button onclick="alert('Loading Strategy Games...')">Explore</button>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🎲</div>
+                <h3>Casino Games</h3>
+                <p>Test your luck and skill</p>
+                <button onclick="alert('Loading Casino Games...')">Explore</button>
+            </div>
+        </div>
+
+        <!-- Featured Games -->
+        <div class="featured">
+            <h2 id="games">🌟 Featured Games</h2>
+            <div class="featured-games">
+                <div class="game-card">
+                    <div class="game-image">🚀</div>
+                    <div class="game-info">
+                        <div class="game-title">Cosmic Blast</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.9/5</div>
+                        <div class="game-description">Destroy asteroids and defeat alien invaders in this classic space shooter.</div>
+                        <div class="game-players">👥 2.5M Players</div>
+                        <button class="play-button" onclick="alert('🚀 Launching Cosmic Blast...')">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🎯</div>
+                    <div class="game-info">
+                        <div class="game-title">Puzzle Master</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.8/5</div>
+                        <div class="game-description">Solve mind-bending puzzles and unlock challenging levels in this brain-teaser.</div>
+                        <div class="game-players">👥 1.8M Players</div>
+                        <button class="play-button" onclick="alert('🧩 Launching Puzzle Master...')">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">⚡</div>
+                    <div class="game-info">
+                        <div class="game-title">Thunder Runner</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.7/5</div>
+                        <div class="game-description">Run through electric obstacles and reach the end in this endless runner.</div>
+                        <div class="game-players">👥 3.2M Players</div>
+                        <button class="play-button" onclick="alert('⚡ Launching Thunder Runner...')">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">👹</div>
+                    <div class="game-info">
+                        <div class="game-title">Monster Battle</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.6/5</div>
+                        <div class="game-description">Collect and battle creatures in this RPG adventure multiplayer experience.</div>
+                        <div class="game-players">👥 4.1M Players</div>
+                        <button class="play-button" onclick="alert('👹 Launching Monster Battle...')">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🏆</div>
+                    <div class="game-info">
+                        <div class="game-title">Champion's Arena</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.9/5</div>
+                        <div class="game-description">Compete against other players in real-time multiplayer battles.</div>
+                        <div class="game-players">👥 5.3M Players</div>
+                        <button class="play-button" onclick="alert('🏆 Launching Champion\\'s Arena...')">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🌍</div>
+                    <div class="game-info">
+                        <div class="game-title">World Quest</div>
+                        <div class="game-rating">⭐⭐⭐⭐⭐ 4.8/5</div>
+                        <div class="game-description">Explore vast worlds, complete quests, and discover hidden treasures.</div>
+                        <div class="game-players">👥 2.9M Players</div>
+                        <button class="play-button" onclick="alert('🌍 Launching World Quest...')">PLAY NOW</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">50M+</div>
+                <div class="stat-label">Active Players Worldwide</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Amazing Games</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Server Uptime</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1B+</div>
+                <div class="stat-label">Games Played</div>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard" id="leaderboard">
+            <h2>🏅 Global Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Score</th>
+                        <th>Games Won</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank first">🥇 1</span></td>
+                        <td>ShadowNinja</td>
+                        <td>9,850,320</td>
+                        <td>1,247</td>
+                        <td>⭐⭐⭐⭐⭐ 100</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank second">🥈 2</span></td>
+                        <td>PhoenixRising</td>
+                        <td>9,320,450</td>
+                        <td>1,183</td>
+                        <td>⭐⭐⭐⭐⭐ 99</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank third">🥉 3</span></td>
+                        <td>ThunderStrike</td>
+                        <td>8,950,670</td>
+                        <td>1,095</td>
+                        <td>⭐⭐⭐⭐⭐ 98</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank">4</span></td>
+                        <td>CyberDragon</td>
+                        <td>8,620,340</td>
+                        <td>987</td>
+                        <td>⭐⭐⭐⭐ 97</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank">5</span></td>
+                        <td>VoidWalker</td>
+                        <td>8,430,210</td>
+                        <td>924</td>
+                        <td>⭐⭐⭐⭐ 96</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank">6</span></td>
+                        <td>FrostByte</td>
+                        <td>8,210,560</td>
+                        <td>856</td>
+                        <td>⭐⭐⭐⭐ 95</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank">7</span></td>
+                        <td>SilentAssassin</td>
+                        <td>7,980,890</td>
+                        <td>812</td>
+                        <td>⭐⭐⭐⭐ 94</td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank">8</span></td>
+                        <td>EchoWave</td>
+                        <td>7,650,340</td>
+                        <td>765</td>
+                        <td>⭐⭐⭐ 93</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 Gaming Paradise | All Rights Reserved</p>
+            <p>🎮 Your Ultimate Gaming Destination 🎮</p>
+        </footer>
+    </div>
+
+    <script>
+        // Create starfield
+        function createStars() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        createStars();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

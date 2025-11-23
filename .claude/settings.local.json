@@ -5,7 +5,17 @@
       "Read(//c/Users/**)",
       "WebSearch",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(mv:*)",
+      "Bash(start fighter-game.html)",
+      "Bash(start casino-game.html)",
+      "Bash(start \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\casino-game.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\casino-game.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\ads-page.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\gaming-paradise.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\racing-games.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\racing-games-playable.html\")",
+      "Bash(start \"\" \"c:\\Users\\Efan Qian\\Documents\\GitHub\\Claude\\f1-game.html\")"
     ]
   },
   "enableAllProjectMcpServers": true,

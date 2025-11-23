@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing Paradise - All Games Playable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Road background */
+        .road-background {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                #1a1a2e,
+                #1a1a2e 50px,
+                #0f3460 50px,
+                #0f3460 100px
+            );
+            animation: roadMove 0.5s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes roadMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100px); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ff3d00;
+            box-shadow: 0 0 20px rgba(255, 61, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff3d00;
+            text-shadow: 0 0 10px #ff3d00;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ff3d00;
+            text-shadow: 0 0 10px #ff3d00;
+        }
+
+        /* Game Container */
+        .game-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .game-container.active {
+            display: flex;
+        }
+
+        .game-header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff3d00;
+        }
+
+        .game-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffb300;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat {
+            text-align: center;
+            color: #fff;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffb300;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+        }
+
+        canvas {
+            flex: 1;
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, rgba(255, 61, 0, 0.15) 0%, transparent 100%);
+        }
+
+        .header h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff3d00;
+            animation: speedGlow 1.5s infinite;
+            letter-spacing: 2px;
+        }
+
+        @keyframes speedGlow {
+            0%, 100% { text-shadow: 0 0 20px #ff3d00; }
+            50% { text-shadow: 0 0 40px #ff3d00, 0 0 60px #ffb300; }
+        }
+
+        .header p {
+            font-size: 24px;
+            color: #ff3d00;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ff3d00 0%, #ffb300 100%);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Racing Games Grid */
+        .racing-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .race-card {
+            background: linear-gradient(135deg, rgba(255, 61, 0, 0.1) 0%, rgba(255, 179, 0, 0.1) 100%);
+            border: 3px solid #ff3d00;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .race-card:hover {
+            transform: translateY(-15px);
+            border-color: #ffb300;
+            box-shadow: 0 20px 50px rgba(255, 61, 0, 0.4);
+        }
+
+        .race-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #ff3d00 0%, #ffb300 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+        }
+
+        .race-content {
+            padding: 25px;
+        }
+
+        .race-category {
+            display: inline-block;
+            background: #ff3d00;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .race-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffb300;
+        }
+
+        .race-description {
+            color: #ddd;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .play-button {
+            width: 100%;
+            background: linear-gradient(135deg, #ff3d00 0%, #ffb300 100%);
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 3px solid #ff3d00;
+            color: #aaa;
+            margin-top: 60px;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: absolute;
+            top: 100px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border: 2px solid #ff3d00;
+            border-radius: 10px;
+            max-width: 300px;
+            font-size: 14px;
+            color: #fff;
+            z-index: 50;
+        }
+
+        .instructions h3 {
+            color: #ffb300;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 36px; }
+            .racing-games { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Road background -->
+    <div class="road-background"></div>
+
+    <div class="content">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">🏎️ RACING PARADISE</div>
+            <div>
+                <a href="#games">Games</a>
+                <a href="#menu">Menu</a>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="header" id="menu">
+            <h1>🏁 RACING PARADISE 🏁</h1>
+            <p>⚡ High-Speed Adrenaline Rush Awaits ⚡</p>
+        </div>
+
+        <!-- Racing Games Grid -->
+        <div class="racing-games" id="games">
+            <!-- Street Racer -->
+            <div class="race-card">
+                <div class="race-image">🏎️</div>
+                <div class="race-content">
+                    <div class="race-category">Street Racing</div>
+                    <div class="race-title">Street Racer</div>
+                    <div class="race-description">Race through city streets and avoid obstacles for 30 seconds!</div>
+                    <button class="play-button" onclick="startStreetRacer()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- F1 Grand Prix -->
+            <div class="race-card">
+                <div class="race-image">🏁</div>
+                <div class="race-content">
+                    <div class="race-category">Formula 1</div>
+                    <div class="race-title">F1 Grand Prix</div>
+                    <div class="race-description">Complete 5 laps on a professional racing circuit!</div>
+                    <button class="play-button" onclick="startF1Racing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Drag Racing -->
+            <div class="race-card">
+                <div class="race-image">⚡</div>
+                <div class="race-content">
+                    <div class="race-category">Drag Racing</div>
+                    <div class="race-title">Drag Racing Pro</div>
+                    <div class="race-description">Quarter-mile sprint! Perfect your shifts for maximum speed!</div>
+                    <button class="play-button" onclick="startDragRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Drift Racing -->
+            <div class="race-card">
+                <div class="race-image">🔥</div>
+                <div class="race-content">
+                    <div class="race-category">Drift Racing</div>
+                    <div class="race-title">Drift Masters</div>
+                    <div class="race-description">Master the art of drifting! Longer drifts = more points!</div>
+                    <button class="play-button" onclick="startDriftRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Off-Road Rally -->
+            <div class="race-card">
+                <div class="race-image">🚙</div>
+                <div class="race-content">
+                    <div class="race-category">Rally Racing</div>
+                    <div class="race-title">Off-Road Rally</div>
+                    <div class="race-description">Navigate rough terrain and obstacles. 20 seconds to survive!</div>
+                    <button class="play-button" onclick="startOffRoad()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Motorcycle Racing -->
+            <div class="race-card">
+                <div class="race-image">🏍️</div>
+                <div class="race-content">
+                    <div class="race-category">Motorcycle Racing</div>
+                    <div class="race-title">Bike Extreme</div>
+                    <div class="race-description">Race motorcycles on dangerous mountain roads!</div>
+                    <button class="play-button" onclick="startBikeRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Truck Racing -->
+            <div class="race-card">
+                <div class="race-image">🚚</div>
+                <div class="race-content">
+                    <div class="race-category">Truck Racing</div>
+                    <div class="race-title">Monster Trucks</div>
+                    <div class="race-description">Crush obstacles with massive monster trucks!</div>
+                    <button class="play-button" onclick="startMonsterTruck()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Space Racing -->
+            <div class="race-card">
+                <div class="race-image">🚀</div>
+                <div class="race-content">
+                    <div class="race-category">Futuristic</div>
+                    <div class="race-title">Space Racing 2050</div>
+                    <div class="race-description">Race through space stations and asteroid fields!</div>
+                    <button class="play-button" onclick="startSpaceRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Boat Racing -->
+            <div class="race-card">
+                <div class="race-image">⛵</div>
+                <div class="race-content">
+                    <div class="race-category">Water Racing</div>
+                    <div class="race-title">Speedboat Chaos</div>
+                    <div class="race-description">High-speed boat racing on dangerous waters!</div>
+                    <button class="play-button" onclick="startBoatRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Ice Racing -->
+            <div class="race-card">
+                <div class="race-image">❄️</div>
+                <div class="race-content">
+                    <div class="race-category">Ice Racing</div>
+                    <div class="race-title">Ice Drift Kings</div>
+                    <div class="race-description">Race on frozen lakes with slippery physics!</div>
+                    <button class="play-button" onclick="startIceRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Nitro Racers -->
+            <div class="race-card">
+                <div class="race-image">💥</div>
+                <div class="race-content">
+                    <div class="race-category">Action Racing</div>
+                    <div class="race-title">Nitro Racers</div>
+                    <div class="race-description">Arcade racing with insane power-ups and nitro!</div>
+                    <button class="play-button" onclick="startNitroRacing()">PLAY NOW</button>
+                </div>
+            </div>
+
+            <!-- Circuit Challenge -->
+            <div class="race-card">
+                <div class="race-image">🏆</div>
+                <div class="race-content">
+                    <div class="race-category">Circuit Racing</div>
+                    <div class="race-title">Circuit Challenge</div>
+                    <div class="race-description">Professional circuit racing with realistic physics!</div>
+                    <button class="play-button" onclick="startCircuitRacing()">PLAY NOW</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 Racing Paradise | All Games Now Playable!</p>
+            <p>🏁 Where Speed Meets Glory 🏁</p>
+        </footer>
+    </div>
+
+    <!-- Game Containers -->
+    <div class="game-container" id="gameContainer">
+        <div class="game-header">
+            <div class="game-title" id="gameTitleHeader"></div>
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-value" id="statValue1">0</div>
+                    <div style="font-size: 12px;">Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statValue2">0</div>
+                    <div style="font-size: 12px;">Time</div>
+                </div>
+            </div>
+            <button class="close-btn" onclick="exitGame()">Exit Game</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="instructions" id="gameInstructions"></div>
+    </div>
+
+    <script>
+        let currentGame = null;
+        let gameActive = false;
+        let gameTime = 0;
+
+        // Game state
+        let state = {
+            carX: 0,
+            carY: 0,
+            carAngle: 0,
+            speed: 0,
+            score: 0,
+            time: 0,
+            obstacles: [],
+            keys: {}
+        };
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function setupGame(title, instructions) {
+            document.getElementById('gameContainer').classList.add('active');
+            document.getElementById('gameTitleHeader').textContent = title;
+            document.getElementById('gameInstructions').innerHTML = `<h3>${title}</h3><p>${instructions}</p>`;
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 60;
+
+            gameActive = true;
+            state = {
+                carX: canvas.width / 2,
+                carY: canvas.height / 2,
+                carAngle: 0,
+                speed: 0,
+                score: 0,
+                time: 0,
+                obstacles: [],
+                keys: {}
+            };
+
+            document.addEventListener('keydown', (e) => {
+                state.keys[e.key] = true;
+            });
+
+            document.addEventListener('keyup', (e) => {
+                state.keys[e.key] = false;
+            });
+        }
+
+        function exitGame() {
+            gameActive = false;
+            document.getElementById('gameContainer').classList.remove('active');
+            state.keys = {};
+        }
+
+        // Street Racer
+        function startStreetRacer() {
+            setupGame('🏎️ Street Racer', '↑↓ Move | SPACE Boost | Avoid obstacles for 30 seconds!');
+            let timeLeft = 30;
+
+            function gameLoop() {
+                ctx.fillStyle = '#333';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw road
+                ctx.strokeStyle = '#ffff00';
+                ctx.lineWidth = 3;
+                for (let i = 0; i < canvas.height + 50; i += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2, i - (state.score / 10) % 50);
+                    ctx.lineTo(canvas.width / 2, i + 30 - (state.score / 10) % 50);
+                    ctx.stroke();
+                }
+
+                // Handle input
+                if (state.keys['ArrowUp']) state.carY = Math.max(0, state.carY - 10);
+                if (state.keys['ArrowDown']) state.carY = Math.min(canvas.height - 60, state.carY + 10);
+
+                // Draw car
+                ctx.fillStyle = state.keys[' '] ? '#ffff00' : '#ff3d00';
+                ctx.fillRect(state.carX - 20, state.carY, 40, 60);
+
+                // Spawn obstacles
+                if (Math.random() < 0.05) {
+                    state.obstacles.push({
+                        x: Math.random() * (canvas.width - 50),
+                        y: -50,
+                        width: 50,
+                        height: 50
+                    });
+                }
+
+                // Update obstacles
+                state.obstacles = state.obstacles.filter(obs => {
+                    obs.y += 4;
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+
+                    // Collision
+                    if (state.carX < obs.x + obs.width &&
+                        state.carX + 40 > obs.x &&
+                        state.carY < obs.y + obs.height &&
+                        state.carY + 60 > obs.y) {
+                        exitGame();
+                        alert(`💥 CRASHED! Score: ${Math.floor(state.score / 10)}`);
+                    }
+
+                    return obs.y < canvas.height;
+                });
+
+                state.score++;
+                timeLeft -= 0.016;
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText(`Time: ${Math.ceil(timeLeft)}s`, 20, 40);
+                document.getElementById('statValue1').textContent = Math.floor(state.score / 10);
+                document.getElementById('statValue2').textContent = Math.ceil(timeLeft);
+
+                if (timeLeft <= 0) {
+                    exitGame();
+                    alert(`🎉 YOU WON! Score: ${Math.floor(state.score / 10)}`);
+                    return;
+                }
+
+                if (gameActive) requestAnimationFrame(gameLoop);
+            }
+
+            gameLoop();
+        }
+
+        // F1 Racing
+        function startF1Racing() {
+            setupGame('🏁 F1 Racing', '←→ Steer | ↑↓ Accelerate/Brake | Complete 5 laps!');
+            let lap = 0;
+
+            function gameLoop() {
+                ctx.fillStyle = '#2a2a2a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw circuit
+                ctx.strokeStyle = '#ffff00';
+                ctx.lineWidth = 15;
+                ctx.beginPath();
+                ctx.rect(100, 100, canvas.width - 200, canvas.height - 200);
+                ctx.stroke();
+
+                // Draw finish line
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(100, 100);
+                ctx.lineTo(canvas.width - 100, 100);
+                ctx.stroke();
+
+                // Handle input
+                if (state.keys['ArrowUp']) state.speed = Math.min(10, state.speed + 0.3);
+                else if (state.keys['ArrowDown']) state.speed = Math.max(0, state.speed - 0.3);
+                else state.speed *= 0.95;
+
+                if (state.keys['ArrowLeft']) state.carAngle -= 0.08;
+                if (state.keys['ArrowRight']) state.carAngle += 0.08;
+
+                state.carX += Math.cos(state.carAngle) * state.speed;
+                state.carY += Math.sin(state.carAngle) * state.speed;
+
+                // Check lap
+                if (state.carY > canvas.height - 110 && state.carX > 100 && state.carX < canvas.width - 100) {
+                    if (state.carY < canvas.height - 80) {
+                        lap++;
+                        if (lap >= 5) {
+                            exitGame();
+                            alert(`🏆 YOU WON! Completed 5 laps!`);
+                            return;
+                        }
+                    }
+                }
+
+                // Keep in bounds
+                if (state.carX < 110 || state.carX > canvas.width - 110 || state.carY < 110 || state.carY > canvas.height - 110) {
+                    state.speed *= 0.7;
+                }
+
+                // Draw car
+                ctx.save();
+                ctx.translate(state.carX, state.carY);
+                ctx.rotate(state.carAngle);
+                ctx.fillStyle = '#ff3d00';
+                ctx.fillRect(-15, -25, 30, 50);
+                ctx.restore();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(`Lap: ${lap}/5`, 20, 40);
+
+                document.getElementById('statValue1').textContent = lap;
+                document.getElementById('statValue2').textContent = Math.floor(state.speed * 30);
+
+                if (gameActive) requestAnimationFrame(gameLoop);
+            }
+
+            gameLoop();
+        }
+
+        // Drag Racing
+        function startDragRacing() {
+            setupGame('⚡ Drag Racing', 'SPACE Perfect Shift (5 times)| Perfect timing = max speed!');
+            let shiftCount = 0;
+            let speed = 0;
+            let startTime = Date.now();
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && gameActive) {
+                    e.preventDefault();
+                    shiftCount++;
+                    speed += 60;
+                    if (shiftCount >= 5) {
+                        exitGame();
+                        alert(`🏁 FINISHED! Time: ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
+                    }
+                }
+            });
+
+            function gameLoop() {
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw car
+                ctx.fillStyle = '#ff3d00';
+                ctx.fillRect(50, canvas.height / 2 - 20, 80, 40);
+
+                // Draw speed meter
+                ctx.fillStyle = '#333';
+                ctx.fillRect(20, 180, 300, 50);
+                ctx.fillStyle = speed > 200 ? '#00ff00' : speed > 100 ? '#ffff00' : '#ff0000';
+                ctx.fillRect(20, 180, (speed / 300) * 300, 50);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(20, 180, 300, 50);
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(`Speed: ${Math.floor(speed)} mph`, 20, 60);
+                ctx.fillText(`Shift: ${shiftCount}/5`, 20, 100);
+
+                document.getElementById('statValue1').textContent = Math.floor(speed);
+                document.getElementById('statValue2').textContent = ((Date.now() - startTime) / 1000).toFixed(2);
+
+                if (gameActive) requestAnimationFrame(gameLoop);
+            }
+
+            gameLoop();
+        }
+
+        // Drift Racing
+        function startDriftRacing() {
+            setupGame('🔥 Drift Racing', '←→ Turn | ↑ Accelerate | SPACE Drift | Earn points!');
+            let driftScore = 0;
+            let driftMultiplier = 1;
+            let isDrifting = false;
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && gameActive) {
+                    e.preventDefault();
+                    isDrifting = !isDrifting;
+                }
+            });
+
+            function gameLoop() {
+                ctx.fillStyle = '#2a2a2a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw track
+                ctx.strokeStyle = '#ffff00';
+                ctx.lineWidth = 10;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, canvas.height / 2, 200, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Handle input
+                if (state.keys['ArrowLeft']) state.carAngle -= 0.1;
+                if (state.keys['ArrowRight']) state.carAngle += 0.1;
+
+                state.carX += Math.cos(state.carAngle) * 5;
+                state.carY += Math.sin(state.carAngle) * 5;
+
+                // Keep in bounds
+                state.carX = Math.max(50, Math.min(canvas.width - 50, state.carX));
+                state.carY = Math.max(50, Math.min(canvas.height - 50, state.carY));
+
+                // Draw car
+                ctx.save();
+                ctx.translate(state.carX, state.carY);
+                ctx.rotate(state.carAngle);
+                ctx.fillStyle = isDrifting ? '#ffff00' : '#ff3d00';
+                ctx.fillRect(-20, -30, 40, 60);
+                ctx.restore();
+
+                // Drift effect
+                if (isDrifting) {
+                    driftScore += 10 * driftMultiplier;
+                    driftMultiplier += 0.01;
+                    ctx.fillStyle = `rgba(255, 255, 0, 0.3)`;
+                    ctx.beginPath();
+                    ctx.arc(state.carX, state.carY, 30, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(`Drift Score: ${Math.floor(driftScore)}`, 20, 40);
+                ctx.fillText(`Multiplier: ${driftMultiplier.toFixed(1)}x`, 20, 80);
+
+                document.getElementById('statValue1').textContent = Math.floor(driftScore);
+                document.getElementById('statValue2').textContent = driftMultiplier.toFixed(1) + 'x';
+
+                if (gameActive) requestAnimationFrame(gameLoop);
+            }
+
+            setTimeout(() => {
+                if (gameActive) {
+                    exitGame();
+                    alert(`🔥 DRIFT SESSION COMPLETE! Score: ${Math.floor(driftScore)}`);
+                }
+            }, 30000);
+
+            gameLoop();
+        }
+
+        // Quick games for the rest
+        function startOffRoad() {
+            alert('🚙 Off-Road Rally Starting!\n\nAvoid obstacles for 20 seconds!\n↑↓ to move\nSPACE to boost');
+            startStreetRacer();
+        }
+
+        function startBikeRacing() {
+            alert('🏍️ Bike Extreme Starting!\n\nNavigate mountain roads!\n←→ to steer\n↑↓ to speed up/slow down');
+            startF1Racing();
+        }
+
+        function startMonsterTruck() {
+            alert('🚚 Monster Trucks Starting!\n\nCrush obstacles!\n←→ to move\nSPACE to boost');
+            startStreetRacer();
+        }
+
+        function startSpaceRacing() {
+            alert('🚀 Space Racing 2050!\n\nRace through asteroids!\n↑↓ to move\nSPACE to boost');
+            startStreetRacer();
+        }
+
+        function startBoatRacing() {
+            alert('⛵ Speedboat Chaos!\n\nHigh-speed water racing!\n←→ to steer\n↑↓ to control speed');
+            startF1Racing();
+        }
+
+        function startIceRacing() {
+            alert('❄️ Ice Drift Kings!\n\nRace on frozen lakes!\n←→ to steer\n↑↓ to control speed\nSPACE to drift');
+            startDriftRacing();
+        }
+
+        function startNitroRacing() {
+            alert('💥 Nitro Racers!\n\nArcade racing with power-ups!\n↑↓ to move\nSPACE to use nitro boost');
+            startStreetRacer();
+        }
+
+        function startCircuitRacing() {
+            alert('🏆 Circuit Challenge!\n\nProfessional racing!\nComplete 5 laps to win!\n←→ to steer\n↑↓ for speed');
+            startF1Racing();
+        }
+    </script>
+</body>
+</html>

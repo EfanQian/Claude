@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labubu Runner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="hud">
+            <div class="score-display">
+                <span class="label">SCORE</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="health-display hidden" id="healthDisplay">
+                <span class="label">HEALTH</span>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthFill"></div>
+                    <span class="health-text" id="healthText">100/100</span>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div class="controls-info" id="controlsInfo">
+            <div class="control-hint" id="playControls">
+                <kbd>A/D</kbd> or <kbd>←/→</kbd> Move Left/Right
+                <kbd>W</kbd> or <kbd>↑</kbd> Jump Up
+                <kbd>S</kbd> or <kbd>↓</kbd> Duck Down
+                <kbd>1</kbd> No Weapon <kbd>2</kbd> Sword <kbd>3</kbd> Gun
+                <kbd>Click</kbd> Attack (when equipped)
+                <kbd>ESC</kbd> Back to Menu
+            </div>
+            <div class="control-hint hidden" id="buildControls">
+                <kbd>Click</kbd> Place/Remove Obstacles
+                <kbd>Click Sign</kbd> Edit Message
+                <kbd>1-9</kbd> Select Obstacle Type
+                <kbd>E</kbd> Select Enemy
+                <kbd>X</kbd> Clear Course
+                <kbd>ESC</kbd> Back to Menu
+            </div>
+        </div>
+
+        <!-- Obstacle Palette for Build Mode -->
+        <div class="obstacle-palette hidden" id="obstaclePalette">
+            <div class="palette-title">Obstacles</div>
+
+            <!-- Platforms Section -->
+            <div class="palette-section">
+                <div class="section-header" data-section="platforms">
+                    <span class="section-title">Platforms</span>
+                    <span class="expand-icon">▶</span>
+                </div>
+                <div class="section-content" id="platformsSection">
+                    <div class="obstacle-item" data-type="platform">
+                        <div class="obstacle-preview platform-preview"></div>
+                        <span>Platform (6)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="moving-platform">
+                        <div class="obstacle-preview moving-platform-preview"></div>
+                        <span>Moving Platform (7)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="spring">
+                        <div class="obstacle-preview spring-preview"></div>
+                        <span>Spring (8)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="ice-platform">
+                        <div class="obstacle-preview ice-platform-preview"></div>
+                        <span>Ice Platform (I)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="conveyor">
+                        <div class="obstacle-preview conveyor-preview"></div>
+                        <span>Conveyor (V)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="disappearing-platform">
+                        <div class="obstacle-preview disappearing-platform-preview"></div>
+                        <span>Vanish Platform (P)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hazards Section -->
+            <div class="palette-section">
+                <div class="section-header" data-section="hazards">
+                    <span class="section-title">Hazards</span>
+                    <span class="expand-icon">▶</span>
+                </div>
+                <div class="section-content" id="hazardsSection">
+                    <div class="obstacle-item active" data-type="barrier">
+                        <div class="obstacle-preview barrier-preview"></div>
+                        <span>Barrier (1)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="sign">
+                        <div class="obstacle-preview sign-preview"></div>
+                        <span>Sign (2)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="cone">
+                        <div class="obstacle-preview cone-preview"></div>
+                        <span>Cone (3)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="spikes">
+                        <div class="obstacle-preview spikes-preview"></div>
+                        <span>Spikes (4)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="laser">
+                        <div class="obstacle-preview laser-preview"></div>
+                        <span>Laser (5)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="enemy">
+                        <div class="obstacle-preview enemy-preview"></div>
+                        <span>Enemy (E)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="fire">
+                        <div class="obstacle-preview fire-preview"></div>
+                        <span>Fire (F)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="saw">
+                        <div class="obstacle-preview saw-preview"></div>
+                        <span>Saw Blade (S)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="poison-cloud">
+                        <div class="obstacle-preview poison-cloud-preview"></div>
+                        <span>Poison (O)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="electric-fence">
+                        <div class="obstacle-preview electric-fence-preview"></div>
+                        <span>Electric Fence (L)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Section -->
+            <div class="palette-section">
+                <div class="section-header" data-section="special">
+                    <span class="section-title">Special</span>
+                    <span class="expand-icon">▶</span>
+                </div>
+                <div class="section-content" id="specialSection">
+                    <div class="obstacle-item" data-type="teleporter">
+                        <div class="obstacle-preview teleporter-preview"></div>
+                        <span>Teleporter (9)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="checkpoint">
+                        <div class="obstacle-preview checkpoint-preview"></div>
+                        <span>Checkpoint (C)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="key">
+                        <div class="obstacle-preview key-preview"></div>
+                        <span>Key (K)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="door">
+                        <div class="obstacle-preview door-preview"></div>
+                        <span>Door (D)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="gravity-flip">
+                        <div class="obstacle-preview gravity-flip-preview"></div>
+                        <span>Gravity Flip (G)</span>
+                    </div>
+                    <div class="obstacle-item" data-type="speed-boost">
+                        <div class="obstacle-preview speed-boost-preview"></div>
+                        <span>Speed Boost (B)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Management -->
+        <div class="course-management hidden" id="courseManagement">
+            <button class="course-btn" id="saveCourseBtn">Save Course</button>
+            <button class="course-btn" id="loadCourseBtn">Load Course</button>
+            <button class="course-btn" id="clearCourseBtn">Clear All</button>
+        </div>
+
+        <div class="start-screen" id="startScreen">
+            <div class="start-content">
+                <h1>🏃 STICKMAN COURSE BUILDER</h1>
+                <div class="game-description">
+                    <p>Build custom obstacle courses for Stickman!</p>
+                    <p>Design challenging courses, then play through them!</p>
+                </div>
+                <div class="mode-buttons">
+                    <button class="start-game-btn" id="buildModeBtn">BUILD COURSE</button>
+                    <button class="start-game-btn" id="playModeBtn">PLAY COURSE</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-over-screen hidden" id="gameOverScreen">
+            <div class="game-over-content">
+                <h2 id="gameOverTitle">GAME OVER</h2>
+                <button class="play-again-btn" id="playAgainBtn">TRY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
